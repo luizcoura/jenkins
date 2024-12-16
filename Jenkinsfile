@@ -15,20 +15,25 @@ pipeline {
                 script {
                     echo "Generating image-version.json..."
 
+                    // Obter a hora atual no formato ISO 8601 (UTC)
+                    def buildTimestamp = new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone('UTC'))
+
                     // Gerar o JSON com detalhes da imagem
                     def jsonContent = """{
                         "repository": "${REPOSITORY}",
                         "image_name": "${IMAGE_NAME}",
-                        "image_tag": "${IMAGE_TAG}"
+                        "image_tag": "${IMAGE_TAG}",
+                        "generated_at": "${buildTimestamp}"
                     }"""
 
                     // Salvar o JSON em um arquivo
                     writeFile file: "${JSON_OUTPUT}", text: jsonContent
 
                     echo "image-version.json generated successfully:"
+                    sh "cat ${JSON_OUTPUT}"
                 }
             }
-        }
+        }        
         
         stage('Build Docker Image') {
             steps {
