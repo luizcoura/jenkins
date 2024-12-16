@@ -3,7 +3,8 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = "registry.coids.inpe.br"
-        IMAGE_NAME = "my-image"
+        REPOSITORY = "skyops"
+        IMAGE_NAME = "core"
         IMAGE_TAG = "${BUILD_NUMBER}"        
     }
 
@@ -12,7 +13,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .'
+                        sh 'docker build -t $DOCKER_REGISTRY/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG -t $DOCKER_REGISTRY/$REPOSITORY/$IMAGE_NAME:latest .'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         throw e
@@ -25,8 +26,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
-                        sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:latest'
+                        sh 'docker push $DOCKER_REGISTRY/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG'
+                        sh 'docker push $DOCKER_REGISTRY/$REPOSITORY/$IMAGE_NAME:latest'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         throw e
@@ -39,7 +40,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        echo "Deploying image $DOCKER_REGISTRY/$IMAGE_NAME:$image_tag to production"
+                        echo "Deploying image $DOCKER_REGISTRY/$REPOSITORY/$IMAGE_NAME:$image_tag to live"
 
                         sh 'deploy ${IMAGE_TAG} ${IMAGE_NAME}'
                     } catch (Exception e) {
@@ -53,16 +54,25 @@ pipeline {
         stage('Cleanup') {
             steps {
                 script {
-                    sh 'docker system prune -f'
+                    sh 'docker system prune -af --volumes'
                 }
             }
         }        
     }
 
     post {
+        always {
+            // Garantir que a limpeza de imagens será sempre executada no final
+            echo "Cleaning up Docker resources..."
+
+            // Remover containers parados, volumes não usados, redes não usadas e imagens não referenciadas
+            sh 'docker system prune -af --volumes'
+        }
+        
         success {
             echo 'Imagem Docker foi enviada com sucesso!'
         }
+        
         failure {
             echo 'Falha ao construir ou enviar a imagem Docker.'
         }
