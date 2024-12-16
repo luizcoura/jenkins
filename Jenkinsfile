@@ -42,7 +42,7 @@ pipeline {
                     try {
                         echo "Deploying image $DOCKER_REGISTRY/$REPOSITORY/$IMAGE_NAME:$IMAGE_TAG to live"
 
-                        sh 'deploy ${IMAGE_NAME} ${IMAGE_TAG}'
+                        sh 'deploy ${REPOSITORY} ${IMAGE_NAME} ${IMAGE_TAG}'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         throw e
