@@ -5,10 +5,30 @@ pipeline {
         DOCKER_REGISTRY = "registry.coids.inpe.br"
         REPOSITORY = "skyops"
         IMAGE_NAME = "core"
-        IMAGE_TAG = "${BUILD_NUMBER}"        
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        JSON_OUTPUT = "image-version.json"        
     }
 
     stages {
+        stage('Pre-Build') {
+            steps {
+                script {
+                    echo "Generating image-version.json..."
+
+                    // Gerar o JSON com detalhes da imagem
+                    def jsonContent = """{
+                        "repository": "${REPOSITORY}",
+                        "image_name": "${IMAGE_NAME}",
+                        "image_tag": "${IMAGE_TAG}"
+                    }"""
+
+                    // Salvar o JSON em um arquivo
+                    writeFile file: "${JSON_OUTPUT}", text: jsonContent
+
+                    echo "image-version.json generated successfully:"
+                }
+            }
+        }        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -36,7 +56,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Swarm') {
+        stage('Deploy') {
             steps {
                 script {
                     try {
