@@ -28,7 +28,8 @@ pipeline {
                     echo "image-version.json generated successfully:"
                 }
             }
-        }        
+        }
+        
         stage('Build Docker Image') {
             steps {
                 script {
