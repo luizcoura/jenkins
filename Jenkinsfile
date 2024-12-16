@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = "registry.coids.inpe.br"
         IMAGE_NAME = "my-image"
-        IMAGE_TAG = "${GIT_COMMIT}"        
+        IMAGE_TAG = "${BUILD_NUMBER}"        
     }
 
     stages {
