@@ -35,6 +35,21 @@ pipeline {
             }
         }
 
+        stage('Deploy to Swarm') {
+            steps {
+                script {
+                    try {
+                        echo "Deploying image $DOCKER_REGISTRY/$IMAGE_NAME:$image_tag to production"
+
+                        sh 'deploy ${IMAGE_TAG} ${IMAGE_NAME}'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }        
+
         stage('Cleanup') {
             steps {
                 script {
