@@ -3,16 +3,20 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = "registry.coids.inpe.br"
-        IMAGE_NAME = "my-image"  // Nome da sua imagem Docker
-        IMAGE_TAG = "latest"     // Tag da imagem (pode ser qualquer valor)
+        IMAGE_NAME = "my-image"
+        IMAGE_TAG = "latest"
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Construir a imagem Docker
-                    sh 'docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
+                    try {
+                        sh 'docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
                 }
             }
         }
@@ -20,8 +24,12 @@ pipeline {
         stage('Push Image to Registry') {
             steps {
                 script {
-                    // Empurrar a imagem para o registry
-                    sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
+                    try {
+                        sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
                 }
             }
         }
