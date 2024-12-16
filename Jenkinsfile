@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = "registry.coids.inpe.br"
         IMAGE_NAME = "my-image"
-        IMAGE_TAG = "latest"
+        IMAGE_TAG = "${GIT_COMMIT}"        
     }
 
     stages {
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
+                        sh 'docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG -t $DOCKER_REGISTRY/$IMAGE_NAME:latest .'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         throw e
@@ -26,6 +26,7 @@ pipeline {
                 script {
                     try {
                         sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
+                        sh 'docker push $DOCKER_REGISTRY/$IMAGE_NAME:latest'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         throw e
@@ -33,6 +34,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh 'docker system prune -f'
+                }
+            }
+        }        
     }
 
     post {
