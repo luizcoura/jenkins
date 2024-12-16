@@ -8,13 +8,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Baixar o código do repositório Git
-                git 'https://github.com/luizcoura/jenkins.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
