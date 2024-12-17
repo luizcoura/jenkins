@@ -2,10 +2,13 @@ pipeline {
     agent any
 
     environment {
+        //Variáveis obrigatórias
         DOCKER_REGISTRY = "registry.coids.inpe.br"
         REPOSITORY = "skyops"
         IMAGE_NAME = "core"
         IMAGE_TAG = "${BUILD_NUMBER}"
+
+	//Variáveis não obrigatórias
         JSON_OUTPUT = "version.json"        
     }
 

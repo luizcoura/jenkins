@@ -1,9 +1,8 @@
 # Escolha uma imagem base
 FROM nginx:alpine
 
-# Copie um arquivo HTML simples para o diretório de conteúdo do Nginx
-COPY index.html /usr/share/nginx/html/index.html
-COPY version.json /usr/share/nginx/html/image-version.json
+# Copie código para o diretório de conteúdo do Nginx
+COPY src/ /usr/share/nginx/html/
 
 # Exponha a porta 80 para acessar o serviço
 EXPOSE 80
