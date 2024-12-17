@@ -13,7 +13,7 @@ pipeline {
         stage('Pre-Build') {
             steps {
                 script {
-                    echo "Generating image-version.json..."
+                    echo "Generating $JSON_OUTPUT..."
 
                     // Obter a hora atual no formato ISO 8601 (UTC)
                     def buildTimestamp = new Date().format("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone('UTC'))
@@ -29,7 +29,7 @@ pipeline {
                     // Salvar o JSON em um arquivo
                     writeFile file: "${JSON_OUTPUT}", text: jsonContent
 
-                    echo "image-version.json generated successfully:"
+                    echo "$JSON_OUTPUT generated successfully:"
                     sh "cat ${JSON_OUTPUT}"
                 }
             }
