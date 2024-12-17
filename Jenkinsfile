@@ -30,10 +30,10 @@ pipeline {
                     }"""
 
                     // Salvar o JSON em um arquivo
-                    writeFile file: "${JSON_OUTPUT}", text: jsonContent
+                    writeFile file: "src/${JSON_OUTPUT}", text: jsonContent
 
                     echo "$JSON_OUTPUT generated successfully:"
-                    sh "cat ${JSON_OUTPUT}"
+                    sh "cat src/${JSON_OUTPUT}"
                 }
             }
         }        
