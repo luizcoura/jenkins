@@ -6,7 +6,7 @@ pipeline {
         REPOSITORY = "skyops"
         IMAGE_NAME = "core"
         IMAGE_TAG = "${BUILD_NUMBER}"
-        JSON_OUTPUT = "image-version.json"        
+        JSON_OUTPUT = "version.json"        
     }
 
     stages {
